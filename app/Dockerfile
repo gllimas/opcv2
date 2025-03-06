@@ -11,14 +11,18 @@ COPY ./app/requirements.txt .
 
 RUN pip install --upgrade pip
 RUN pip install Cmake
+RUN pip install opencv-python-headless
 RUN apt-get update && apt-get install -y \
     build-essential \
     cmake \
     git \
+    libopencv-dev \
+    v4l-utils \
     libgl1-mesa-glx \
     libglib2.0-0 \
     && rm -rf /var/lib/apt/lists/*
 RUN pip install dlib
+
 
 
 

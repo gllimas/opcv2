@@ -12,8 +12,26 @@ services:
     ports:
       - "8000:8000"
 
-#    devices:
-#      - /dev/video0:/dev/video0
+    devices:
+      - /dev/video0:/dev/video0
+    privileged: true
 
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+#    extra_hosts:
+#      - "host.docker.internal:host-gateway"
+
+
+#version: '3'
+#services:
+#  nginx:
+#    image: nginx:1.11.8-alpine
+#    ports:
+#      - "8081:80"
+#    volumes:
+#      - my_test_volume:/usr/share/app
+#volumes:
+#  my_test_volume:
+#    driver: local
+#    driver_opts:
+#       o: bind
+#       type: none
+#       device: /home/jinna/Jinna_Balu/Test_volume
