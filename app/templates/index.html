@@ -1,0 +1,200 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+<!--    <title>Face Recognition and Photo Upload</title>-->
+<!--    <style>-->
+<!--        #video {-->
+<!--            width: 100%;-->
+<!--            max-width: 640px;-->
+<!--            border: 1px solid black;-->
+<!--        }-->
+<!--    </style>-->
+<!--</head>-->
+<!--<body>-->
+<!--    <h1>Видео с камеры</h1>-->
+<!--    <img id="video" src="/api/video_feed/" alt="Video Stream" />-->
+<!--    <ul id="faces"></ul>-->
+
+<!--    <h1>Загрузка фотографии</h1>-->
+<!--    <form id="upload-form" action="/api/upload/" method="post" enctype="multipart/form-data">-->
+<!--        <label for="title">Пользователь:</label>-->
+<!--        <input type="text" id="title" name="title" required><br><br>-->
+
+<!--        <label for="file">Файл:</label>-->
+<!--        <input type="file" id="file" name="file" accept="image/*" required><br><br>-->
+
+<!--        <label for="user_name">Имя для распознания:</label>-->
+<!--        <input type="text" id="user_name" name="user_name" required><br><br>-->
+
+<!--        <button type="submit">Загрузить</button>-->
+<!--    </form>-->
+
+<!--    <div id="response"></div>-->
+
+<!--    <script>-->
+<!--        // WebSocket для видео-->
+<!--        const facesList = document.getElementById("faces");-->
+<!--        const websocket = new WebSocket("ws://localhost:8080/ws/video");-->
+
+<!--        websocket.onmessage = function(event) {-->
+<!--            const data = JSON.parse(event.data);-->
+<!--            facesList.innerHTML = ""; // Очистить список-->
+
+<!--            data.names.forEach((name, index) => {-->
+<!--                const li = document.createElement("li");-->
+<!--                li.textContent = `${name} at ${data.locations[index]}`;-->
+<!--                facesList.appendChild(li);-->
+<!--            });-->
+<!--        };-->
+
+<!--        websocket.onclose = function(event) {-->
+<!--            console.log("WebSocket closed:", event);-->
+<!--        };-->
+
+<!--        websocket.onerror = function(error) {-->
+<!--            console.error("WebSocket error:", error);-->
+<!--        };-->
+
+<!--        // Обработка формы загрузки-->
+<!--        document.getElementById('upload-form').onsubmit = async function(event) {-->
+<!--            event.preventDefault(); // Предотвращаем стандартное поведение формы-->
+
+<!--            const formData = new FormData(this);-->
+<!--            const responseDiv = document.getElementById('response');-->
+
+<!--            const response = await fetch('/api/upload/', {-->
+<!--                method: 'POST',-->
+<!--                body: formData-->
+<!--            });-->
+
+<!--            const result = await response.json();-->
+<!--            if (response.ok) {-->
+<!--                responseDiv.innerHTML = `<p>Загрузка успешна! ID: ${result.id}, Заголовок: ${result.title}</p>`;-->
+<!--            } else {-->
+<!--                responseDiv.innerHTML = `<p>Ошибка: ${result.message}</p>`;-->
+<!--            }-->
+<!--        };-->
+<!--    </script>-->
+<!--</body>-->
+<!--</html>-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Recognition and Photo Upload</title>
+    <style>
+        body {
+            display: flex; /* Используем Flexbox для размещения элементов */
+            align-items: stretch; /* Растягиваем элементы на одинаковую высоту */
+            gap: 20px; /* Добавляем промежуток между блоками */
+            padding: 20px; /* Добавляем отступы вокруг содержимого */
+        }
+
+        #video {
+            width: 100%;
+            max-width: 640px;
+            border: 1px solid black;
+            flex: 1; /* Позволяем блоку с видео занимать оставшееся пространство */
+        }
+
+        #upload-container {
+            max-width: 300px; /* Устанавливаем максимальную ширину для блока загрузки */
+            /*border: 1px solid black; !* Добавляем рамку для блока загрузки *!*/
+            padding: 10px; /* Добавляем внутренние отступы */
+            display: flex;
+            flex-direction: column; /* Элементы формы располагаем вертикально */
+            justify-content: flex-start; /* Выравниваем элементы формы по верхнему краю */
+        }
+
+        /* Дополнительные стили для формы */
+        form {
+            display: flex;
+            flex-direction: column; /* Элементы формы располагаем вертикально */
+        }
+
+        label {
+            margin-bottom: 5px; /* Отступ между меткой и полем ввода */
+        }
+
+        input, button {
+            margin-bottom: 10px; /* Отступ между полями ввода и кнопкой */
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <h1>Видео с камеры</h1>
+        <img id="video" src="/api/video_feed/" alt="Video Stream" />
+        <ul id="faces"></ul>
+    </div>
+
+    <div id="upload-container">
+        <h1>Загрузка фотографии</h1>
+        <form id="upload-form" action="/api/upload/" method="post" enctype="multipart/form-data">
+            <label for="title">Пользователь:</label>
+            <input type="text" id="title" name="title" required>
+
+            <label for="file">Файл:</label>
+            <input type="file" id="file" name="file" accept="image/*" required>
+
+            <label for="user_name">Имя для распознания:</label>
+            <input type="text" id="user_name" name="user_name" required>
+
+            <button type="submit">Загрузить</button>
+        </form>
+        <div id="response"></div>
+    </div>
+
+    <script>
+        // WebSocket для видео
+        const facesList = document.getElementById("faces");
+        const websocket = new WebSocket("ws://localhost:8080/ws/video");
+
+        websocket.onmessage = function(event) {
+            const data = JSON.parse(event.data);
+            facesList.innerHTML = ""; // Очистить список
+
+            data.names.forEach((name, index) => {
+                const li = document.createElement("li");
+                li.textContent = `${name} at ${data.locations[index]}`;
+                facesList.appendChild(li);
+            });
+        };
+
+        websocket.onclose = function(event) {
+            console.log("WebSocket closed:", event);
+        };
+
+        websocket.onerror = function(error) {
+            console.error("WebSocket error:", error);
+        };
+
+        // Обработка формы загрузки
+        document.getElementById('upload-form').onsubmit = async function(event) {
+            event.preventDefault(); // Предотвращаем стандартное поведение формы
+
+            const formData = new FormData(this);
+            const responseDiv = document.getElementById('response');
+
+            const response = await fetch('/api/upload/', {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                responseDiv.innerHTML = `<p>Загрузка успешна! ID: ${result.id}, Заголовок: ${result.title}</p>`;
+            } else {
+                responseDiv.innerHTML = `<p>Ошибка: ${result.message}</p>`;
+            }
+        };
+    </script>
+</body>
+</html>
+
+
+
