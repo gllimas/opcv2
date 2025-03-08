@@ -1,3 +1,4 @@
+import time
 from datetime import datetime
 
 import face_recognition
@@ -5,22 +6,27 @@ import cv2
 import os
 import pickle
 
-from fastapi import Depends
 from sqlmodel import select, Session
 from database import get_session, engine
 from models import UserFace, Base, UserIn
+from datetime import datetime, timedelta
 
 cascPathface = os.path.join(os.path.dirname(cv2.__file__), "data/haarcascade_frontalface_alt2.xml")
 faceCascade = cv2.CascadeClassifier(cascPathface)
 
+last_call_time = None
 
-def save_user_in(name: str='name', session: Session = Depends(get_session)):
-    new_user = UserIn(name=name, data=datetime.now())
-    session.add(new_user)
-    session.commit()
-    session.refresh(new_user)
 
-    return new_user
+def save_user_in(name, session):
+    existing_user = session.query(UserIn).filter_by(name=name).first()
+    if existing_user:
+
+        existing_user.data = datetime.now()
+        session.commit()
+    else:
+        new_user = UserIn(name=name, data=datetime.now())
+        session.add(new_user)
+        session.commit()
 
 
 class VideoCv():
@@ -38,15 +44,19 @@ class VideoCv():
 
         return known_encodings, known_names
 
-    def recognize_faces(image, known_encodings, known_names):
+    @staticmethod
+    def recognize_faces(image, known_encodings, known_names, session):
         """Распознавание лиц на изображении."""
+        global last_call_time
         rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        faces = faceCascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(60, 60), flags=cv2.CASCADE_SCALE_IMAGE)
+        faces = faceCascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(60, 60),
+                                             flags=cv2.CASCADE_SCALE_IMAGE)
 
         encodings = face_recognition.face_encodings(rgb)
         names = []
         face_locations = []
+
 
         for (x, y, w, h) in faces:
             face_locations.append((y, y + h, x, x + w))  # (top, bottom, left, right)
@@ -54,7 +64,7 @@ class VideoCv():
         if encodings:
             for encoding in encodings:
                 matches = face_recognition.compare_faces(known_encodings, encoding)
-                name = "Unknown"
+                name = "No"
 
                 if True in matches:
                     matchedIdxs = [i for (i, b) in enumerate(matches) if b]
@@ -63,14 +73,18 @@ class VideoCv():
                         name = known_names[i]
                         counts[name] = counts.get(name, 0) + 1
                     name = max(counts, key=counts.get)
-                save_user_in(name)
+
+
+                    if name != "No":
+                        current_time = datetime.now()
+                        if last_call_time is None or (current_time - last_call_time) >= timedelta(minutes=1):
+                            save_user_in(name, session)
+                            last_call_time = current_time
+
+
                 names.append(name)
-
-                # здесь нужно написать код для сохранения в базу данных
-
-
         else:
-            names = ["Unknown"] * len(faces)
+            names = ["NO"] * len(faces)
 
         return names, face_locations
 
@@ -91,7 +105,7 @@ class VideoCv():
 
                 frame = cv2.flip(frame, 1)
 
-                names, face_locations = VideoCv.recognize_faces(frame, known_encodings, known_names)
+                names, face_locations = VideoCv.recognize_faces(frame, known_encodings, known_names, session)
 
                 # Отрисовка рамок и имен
                 for (top, bottom, left, right), name in zip(face_locations, names):

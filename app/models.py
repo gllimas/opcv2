@@ -32,8 +32,20 @@ class Photo(SQLModel, table=True):
 Base = SQLModel
 
 
+# class UserIn(SQLModel, table=True):
+#     """Модель для хранения информации о пользователе."""
+#     id: Optional[int] = Field(default=None, primary_key=True)
+#     name: str = Field(max_length=20, nullable=False, unique=True)
+#     data: datetime = Field(default_factory=datetime.now)
+
 class UserIn(SQLModel, table=True):
     """Модель для хранения информации о пользователе."""
     id: Optional[int] = Field(default=None, primary_key=True)
     name: str = Field(max_length=20, nullable=False, unique=True)
-    data: datetime = Field(default_factory=datetime.now)
+    data: datetime = Field(default_factory=lambda: datetime.now().replace(second=0, microsecond=0))
+
+    def update_data(self):
+        """Метод для обновления поля data без секунд и микросекунд."""
+        self.data = datetime.now().replace(second=0, microsecond=0)
+
+
