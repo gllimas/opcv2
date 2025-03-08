@@ -49,3 +49,10 @@ class UserIn(SQLModel, table=True):
         self.data = datetime.now().replace(second=0, microsecond=0)
 
 
+class User(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    username: str = Field(unique=True, index=True, nullable=False)
+    hashed_password: str = Field(nullable=False)
+
+    def __repr__(self):
+        return f"<User (username={self.username})>"

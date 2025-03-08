@@ -121,39 +121,39 @@ class VideoCv():
             session.close()
             video_capture.release()
 
-    if __name__ == "__main__":
-        Base.metadata.create_all(engine)
-
-        video_capture = cv2.VideoCapture(0)
-
-        session_generator = get_session()
-        session = next(session_generator)
-
-        try:
-            known_encodings, known_names = load_face_encodings_from_db(session)
-
-            while True:
-                ret, frame = video_capture.read()
-                if not ret:
-                    print("Не удалось захватить кадр.")
-                    break
-
-                frame = cv2.flip(frame, 1)
-
-                names, face_locations = recognize_faces(frame, known_encodings, known_names)
-
-                # Отрисовка рамок и имен
-                for (top, bottom, left, right), name in zip(face_locations, names):
-                    cv2.rectangle(frame, (left, top), (right, bottom), (0, 255, 0), 2)
-                    cv2.putText(frame, name, (left, top - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-
-                # Отображение видео
-                cv2.imshow("Video", frame)
-
-                # Выход при нажатии клавиши 'q'
-                if cv2.waitKey(1) & 0xFF == ord('q'):
-                    break
-        finally:
-            session.close()
-            video_capture.release()
-            cv2.destroyAllWindows()
+    # if __name__ == "__main__":
+    #     Base.metadata.create_all(engine)
+    #
+    #     video_capture = cv2.VideoCapture(0)
+    #
+    #     session_generator = get_session()
+    #     session = next(session_generator)
+    #
+    #     try:
+    #         known_encodings, known_names = load_face_encodings_from_db(session)
+    #
+    #         while True:
+    #             ret, frame = video_capture.read()
+    #             if not ret:
+    #                 print("Не удалось захватить кадр.")
+    #                 break
+    #
+    #             frame = cv2.flip(frame, 1)
+    #
+    #             names, face_locations = recognize_faces(frame, known_encodings, known_names)
+    #
+    #             # Отрисовка рамок и имен
+    #             for (top, bottom, left, right), name in zip(face_locations, names):
+    #                 cv2.rectangle(frame, (left, top), (right, bottom), (0, 255, 0), 2)
+    #                 cv2.putText(frame, name, (left, top - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+    #
+    #             # Отображение видео
+    #             cv2.imshow("Video", frame)
+    #
+    #             # Выход при нажатии клавиши 'q'
+    #             if cv2.waitKey(1) & 0xFF == ord('q'):
+    #                 break
+    #     finally:
+    #         session.close()
+    #         video_capture.release()
+    #         cv2.destroyAllWindows()
