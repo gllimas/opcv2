@@ -1,13 +1,13 @@
 import os
 import time
-from database import get_session  # Предполагается, что это ваша функция для получения сессии базы данных
+from database import get_session
 from fastapi import FastAPI, Depends, HTTPException, status, APIRouter
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from typing import Optional
-from models import User  # Предполагается, что у вас есть модель User в models.py
+from models import User
 
 SECRET_KEY = "your_secret_key"
 ALGORITHM = "HS256"
@@ -20,11 +20,9 @@ router = APIRouter()
 
 
 def get_password_hash(password: str) -> str:
-    """Хеширует пароль с использованием bcrypt."""
     return pwd_context.hash(password)
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """Проверяет, совпадает ли открытый пароль с хешем."""
     return pwd_context.verify(plain_password, hashed_password)
 
 

@@ -22,7 +22,7 @@ websocket.onerror = function(error) {
 
         // Обработка формы загрузки
 document.getElementById('upload-form').onsubmit = async function(event) {
-    event.preventDefault(); // Предотвращаем стандартное поведение формы
+    event.preventDefault();
 
     const formData = new FormData(this);
     const responseDiv = document.getElementById('response');
@@ -41,8 +41,8 @@ document.getElementById('upload-form').onsubmit = async function(event) {
 };
 
 document.getElementById('logoutButton').addEventListener('click', () => {
-    localStorage.removeItem('access_token'); // Удаляем токен из localStorage
-    window.location.href = 'login'; // Перенаправляем пользователя на страницу входа
+    localStorage.removeItem('access_token');
+    window.location.href = 'login';
 });
 
 
@@ -50,13 +50,13 @@ const token = localStorage.getItem('access_token');
 
 if (!token) {
     alert('Авторизуйтесь');
-    window.location.href = '/login'; // Перенаправьте на страницу входа, если токен отсутствует
+    window.location.href = '/login';
 } else {
-            // Пример запроса к защищенному ресурсу с использованием токена
+
     fetch('/protected-resource', {
         method: 'GET',
         headers: {
-            'Authorization': `Bearer ${token}`, // Добавьте токен в заголовок
+            'Authorization': `Bearer ${token}`,
         },
     })
         .then(response => {
@@ -72,5 +72,4 @@ if (!token) {
             console.error('There was a problem with the fetch operation:', error);
         });
 }
-
 

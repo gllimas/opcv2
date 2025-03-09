@@ -1,53 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Face Recognition and Photo Upload</title>
-    <style>
-        body {
-            display: flex; /* Используем Flexbox для размещения элементов */
-            align-items: stretch; /* Растягиваем элементы на одинаковую высоту */
-            gap: 20px; /* Добавляем промежуток между блоками */
-            padding: 20px; /* Добавляем отступы вокруг содержимого */
-        }
-
-        #video {
-            width: 100%;
-            max-width: 640px;
-            border: 1px solid black;
-            flex: 1; /* Позволяем блоку с видео занимать оставшееся пространство */
-        }
-
-        #upload-container {
-            max-width: 300px; /* Устанавливаем максимальную ширину для блока загрузки */
-            /*border: 1px solid black; !* Добавляем рамку для блока загрузки *!*/
-            padding: 10px; /* Добавляем внутренние отступы */
-            display: flex;
-            flex-direction: column; /* Элементы формы располагаем вертикально */
-            justify-content: flex-start; /* Выравниваем элементы формы по верхнему краю */
-        }
-
-        /* Дополнительные стили для формы */
-        form {
-            display: flex;
-            flex-direction: column; /* Элементы формы располагаем вертикально */
-        }
-
-        label {
-            margin-bottom: 5px; /* Отступ между меткой и полем ввода */
-        }
-
-        input, button {
-            margin-bottom: 10px; /* Отступ между полями ввода и кнопкой */
-        }
-    </style>
+    <link rel="stylesheet" href="/static/styles.css">
+    <title>Распознавание лиц и загрузка фотографий</title>
 </head>
 <body>
-    <div>
-        <h1>Видео с камеры</h1>
-        <img id="video" src="/api/video_feed/" alt="Video Stream" />
-        <ul id="faces"></ul>
+    <div id="banner">
+        <div id="date-time"></div>
+        <button id="logoutButton">Выйти</button>
+    </div>
+
+    <div id="video-container">
+        <img id="video" src="/api/video_feed/" alt="Поток видео" />
     </div>
 
     <div id="upload-container">
@@ -67,31 +33,38 @@
         <div id="response"></div>
     </div>
 
-
-</body>
-</html>
-
-
-<button id="logoutButton">Выйти</button>
-
-
-
-
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Index Page</title>
-</head>
-<body>
-    <h1></h1>
-    <div id="userData"></div>
-
+    <ul id="faces"></ul>
 
     <script src="/static/cvscr.js"></script>
+    <script>
+
+function updateDateTime() {
+    const optionsDate = {
+        timeZone: 'Europe/Moscow',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+    };
+
+    const optionsTime = {
+        timeZone: 'Europe/Moscow',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+    };
+
+    const date = new Date();
+    const formattedDate = date.toLocaleDateString('ru-RU', optionsDate);
+    const formattedTime = date.toLocaleTimeString('ru-RU', optionsTime);
+
+    document.getElementById('date-time').innerText = `${formattedDate} ${formattedTime}`;
+}
 
 
+setInterval(updateDateTime, 1000);
+
+updateDateTime();
+
+    </script>
 </body>
 </html>

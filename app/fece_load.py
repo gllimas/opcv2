@@ -8,13 +8,17 @@ import pickle
 
 from sqlmodel import select, Session
 from database import get_session, engine
-from models import UserFace, Base, UserIn
+from models import UserFace, UserIn
 from datetime import datetime, timedelta
 
 cascPathface = os.path.join(os.path.dirname(cv2.__file__), "data/haarcascade_frontalface_alt2.xml")
 faceCascade = cv2.CascadeClassifier(cascPathface)
 
 last_call_time = None
+
+# def masage_info(info_message=None):
+#     nameinfo = info_message
+#     return nameinfo
 
 
 def save_user_in(name, session):
@@ -76,6 +80,9 @@ class VideoCv():
 
 
                     if name != "No":
+                        # info_message = masage_info()
+                        # masage_info()
+
                         current_time = datetime.now()
                         if last_call_time is None or (current_time - last_call_time) >= timedelta(minutes=1):
                             save_user_in(name, session)

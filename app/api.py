@@ -21,13 +21,12 @@ router = APIRouter()
 active_connections: List[WebSocket] = []
 
 async def broadcast(message: str):
-    """Отправка сообщения всем активным соединениям."""
     for connection in active_connections:
         try:
             await connection.send_text(message)
         except Exception as e:
             print(f"Error sending to WebSocket: {e}")
-            active_connections.remove(connection) #если соединение разорвано удаляем его
+            active_connections.remove(connection)
 
 @router.websocket("/ws/video")
 async def websocket_endpoint(websocket: WebSocket):
