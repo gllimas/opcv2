@@ -1,13 +1,13 @@
-import time
-from datetime import datetime
+import asyncio
 
 import face_recognition
 import cv2
 import os
 import pickle
 
-from sqlmodel import select, Session
-from database import get_session, engine
+from sqlmodel import select
+from kontrol import com_port
+from database import get_session
 from models import UserFace, UserIn
 from datetime import datetime, timedelta
 
@@ -15,10 +15,15 @@ cascPathface = os.path.join(os.path.dirname(cv2.__file__), "data/haarcascade_fro
 faceCascade = cv2.CascadeClassifier(cascPathface)
 
 last_call_time = None
+Name_user_in = []
 
-# def masage_info(info_message=None):
-#     nameinfo = info_message
-#     return nameinfo
+
+
+
+def masage_info(info_message=None):
+    if info_message:
+        Name_user_in.append(info_message)
+    return None
 
 
 def save_user_in(name, session):
@@ -31,6 +36,7 @@ def save_user_in(name, session):
         new_user = UserIn(name=name, data=datetime.now())
         session.add(new_user)
         session.commit()
+
 
 
 class VideoCv():
@@ -80,11 +86,10 @@ class VideoCv():
 
 
                     if name != "No":
-                        # info_message = masage_info()
-                        # masage_info()
-
                         current_time = datetime.now()
                         if last_call_time is None or (current_time - last_call_time) >= timedelta(minutes=1):
+                            asyncio.run(com_port())
+                            masage_info(name)
                             save_user_in(name, session)
                             last_call_time = current_time
 
@@ -147,7 +152,7 @@ class VideoCv():
     #
     #             frame = cv2.flip(frame, 1)
     #
-    #             names, face_locations = recognize_faces(frame, known_encodings, known_names)
+    #             names, face_locations = recognize_faces(frame, known_encodings, known_names, session)
     #
     #             # Отрисовка рамок и имен
     #             for (top, bottom, left, right), name in zip(face_locations, names):
@@ -164,3 +169,4 @@ class VideoCv():
     #         session.close()
     #         video_capture.release()
     #         cv2.destroyAllWindows()
+
