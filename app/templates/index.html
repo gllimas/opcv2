@@ -16,6 +16,24 @@
         <img id="video" src="/api/video_feed/" alt="Поток видео" />
     </div>
 
+    <button id="port-connection-button" onclick="location.href='/ports'">Подключить порт</button>
+
+     <script>
+        async function buttonOn() {
+            const response = await fetch('kontrol/button_on', {
+                method: 'GET',
+            });
+
+            if (response.ok) {
+                alert('Button pressed!');
+            } else {
+                alert('Error occurred!');
+            }
+        }
+    </script>
+
+    <button onclick="buttonOn()">Открыть</button>
+
     <div id="upload-container">
         <h1>Загрузка фотографии</h1>
         <form id="upload-form" action="/api/upload/" method="post" enctype="multipart/form-data">
@@ -41,66 +59,5 @@
 
 
     <script src="/static/cvscr.js"></script>
-    <script>
-
-function updateDateTime() {
-const optionsDate = {
-   timeZone: 'Europe/Moscow',
-   year: 'numeric',
-   month: 'long',
-   day: 'numeric',
-    };
-
-const optionsTime = {
-    timeZone: 'Europe/Moscow',
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false
-    };
-
-    const date = new Date();
-    const formattedDate = date.toLocaleDateString('ru-RU', optionsDate);
-    const formattedTime = date.toLocaleTimeString('ru-RU', optionsTime);
-
-    document.getElementById('date-time').innerText = `${formattedDate} ${formattedTime}`;
-}
-
-
-setInterval(updateDateTime, 1000);
-
-updateDateTime();
-
-
-
-const socket = new WebSocket("ws://localhost:8000/ws/names");
-
-socket.onopen = function() {
-    console.log('Соединение с веб-сокетом установлено');
-};
-
-socket.onmessage = function(event) {
-    const names = JSON.parse(event.data);
-    const facesList = document.getElementById('faces');
-    facesList.innerHTML = '';
-
-    names.forEach(name => {
-        const listItem = document.createElement('li');
-        listItem.textContent = name;
-        facesList.appendChild(listItem);
-    });
-};
-
-socket.onclose = function() {
-    console.log('Соединение с веб-сокетом закрыто');
-};
-
-socket.onerror = function(error) {
-    console.error('Ошибка веб-сокета:', error);
-};
-
-
-    </script>
-
-
 </body>
 </html>

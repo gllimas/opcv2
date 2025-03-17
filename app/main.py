@@ -28,6 +28,7 @@ def create_db_and_tables():
     SQLModel.metadata.create_all(engine)
 
 app = FastAPI(middleware=middleware, title='Face Recognition', description='Face recognition using OpenCV and FastAPI', docs_url=None, redoc_url=None)
+
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 app.include_router(api.router, tags=["API"], prefix="/api")
@@ -48,7 +49,7 @@ async def read_root(request: Request):
 
 @app.get("/login", response_class=HTMLResponse)
 async def login_page(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse("login.html", {"request": request})
 
 
 

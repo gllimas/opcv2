@@ -4,29 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Доступные USB-порты</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        h1 {
-            color: #333;
-        }
-        ul {
-            list-style-type: none;
-            padding: 0;
-        }
-        li {
-            padding: 10px;
-            border: 1px solid #ccc;
-            margin-bottom: 5px;
-            border-radius: 5px;
-        }
-        select, button {
-            padding: 10px;
-            margin-top: 10px;
-        }
-    </style>
+    <link rel="stylesheet" href="/static/portsstyle.css">
 </head>
 <body>
 
@@ -34,59 +12,11 @@
     <select id="port-select" required>
         <option value="">-- Пожалуйста, выберите порт --</option>
 
-    </select>
-    <button id="connect-button">Подключиться</button>
+    </select><br>
+    <button id="connect-button">Подключиться</button><br>
+    <button id="back-button">Вернуться на главный экран</button>
 
-    <script>
-        /
-        async function fetchPorts() {
-            try {
-                const response = await fetch('/kontrol/usb_ports');
-                if (!response.ok) {
-                    throw new Error('Сеть не отвечает');
-                }
-                const data = await response.json();
-                const portSelect = document.getElementById('port-select');
-
-
-                portSelect.innerHTML = '<option value="">-- Пожалуйста, выберите порт --</option>';
-                data.ports.forEach(port => {
-                    const option = document.createElement('option');
-                    option.value = port.device;
-                    option.textContent = `${port.device} - ${port.description}`;
-                    portSelect.appendChild(option);
-                });
-            } catch (error) {
-                console.error('Ошибка при загрузке портов:', error);
-            }
-        }
-
-
-        window.onload = fetchPorts;
-
-
-        document.getElementById('connect-button').addEventListener('click', async () => {
-            const selectedPort = document.getElementById('port-select').value;
-            if (selectedPort) {
-                const response = await fetch('/kontrol/select_port', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ port: selectedPort }),
-                });
-
-                if (response.ok) {
-                    const result = await response.json();
-                    alert(`Выбран порт: ${result.port}`);
-                } else {
-                    alert('Ошибка при выборе порта. Попробуйте позже.');
-                }
-            } else {
-                alert('Пожалуйста, выберите порт.');
-            }
-        });
-    </script>
+    <script src="/static/ports.js"></script>
 
 </body>
 </html>
