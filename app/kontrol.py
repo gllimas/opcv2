@@ -1,4 +1,6 @@
 import asyncio
+
+
 import serial
 
 from fastapi import APIRouter
@@ -7,11 +9,12 @@ import serial.tools.list_ports
 from starlette.responses import JSONResponse, Response
 from starlette.status import HTTP_202_ACCEPTED
 
+
 router = APIRouter()
 
 selected_port = None
 
-
+Name_user_in = []
 
 @router.get("/usb_ports", response_class=JSONResponse)
 async def get_usb_ports():
@@ -59,3 +62,4 @@ async def com_port():
 async def button_on():
     await com_port()
     return Response(status_code=HTTP_202_ACCEPTED)
+

@@ -1,23 +1,18 @@
-import asyncio
 import json
 from typing import List
-import serial
-
+from openpyxl import Workbook
+from io import BytesIO
 from fastapi import APIRouter, UploadFile, File, Form, Depends
 import os
 import pickle
 import face_recognition
-
+# from sqlalchemy import select
 from sqlmodel import Session
-
-
-from starlette.responses import JSONResponse, StreamingResponse
+from starlette.responses import JSONResponse, StreamingResponse, Response, FileResponse
 from starlette.websockets import WebSocket, WebSocketDisconnect
-
-from fece_load import VideoCv, Name_user_in
-
+from fece_load import VideoCv
 from database import get_session
-from models import Photo, UserFace
+from models import Photo, UserFace, User
 
 router = APIRouter()
 
@@ -100,6 +95,31 @@ async def upload_photo(
 @router.get("/video_feed/")
 async def video_feed():
     return StreamingResponse(VideoCv.generate_video_stream(), media_type="multipart/x-mixed-replace; boundary=frame")
+
+@router.get("/exel/")
+async def exel(*, db: Session = Depends(get_session)):
+    response = db.query(User).all()
+    print(len(response))
+    result = [item.dict() for item in response]
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "пользователь"
+    ws.append(["id", "username"])
+    for user in result:
+        ws.append([user['id'], user['username']])
+    auth = BytesIO()
+    wb.save(auth)
+    auth.seek(0)
+    headers = {"Content-Disposition": 'attachment; filename="users.xlsx"',
+               "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", }
+    return Response(content=auth.getvalue(), headers=headers)
+
+
+
+
+
+
+
 
 
 

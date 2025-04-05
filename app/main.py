@@ -3,7 +3,7 @@ from sqlmodel import SQLModel
 from starlette.middleware import Middleware
 from starlette.middleware.cors import CORSMiddleware
 from fastapi.templating import Jinja2Templates
-from starlette.responses import HTMLResponse, JSONResponse
+from starlette.responses import HTMLResponse
 from starlette.staticfiles import StaticFiles
 
 
@@ -27,7 +27,8 @@ templates = Jinja2Templates(directory="templates")
 def create_db_and_tables():
     SQLModel.metadata.create_all(engine)
 
-app = FastAPI(middleware=middleware, title='Face Recognition', description='Face recognition using OpenCV and FastAPI', docs_url=None, redoc_url=None)
+app = FastAPI(middleware=middleware, title='Face Recognition', description='Face recognition using OpenCV and FastAPI')
+# , docs_url=None, redoc_url=None
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 

@@ -15,15 +15,15 @@ cascPathface = os.path.join(os.path.dirname(cv2.__file__), "data/haarcascade_fro
 faceCascade = cv2.CascadeClassifier(cascPathface)
 
 last_call_time = None
-Name_user_in = []
 
 
 
 
-def masage_info(info_message=None):
-    if info_message:
-        Name_user_in.append(info_message)
-    return None
+#
+# def masage_info(info_message=None):
+#     if info_message:
+#         Name_user_in.append(info_message)
+#     return None
 
 
 def save_user_in(name, session):
@@ -36,6 +36,8 @@ def save_user_in(name, session):
         new_user = UserIn(name=name, data=datetime.now())
         session.add(new_user)
         session.commit()
+
+        # сделать ласт тайм для пользователя!
 
 
 
@@ -89,7 +91,6 @@ class VideoCv():
                         current_time = datetime.now()
                         if last_call_time is None or (current_time - last_call_time) >= timedelta(minutes=1):
                             asyncio.run(com_port())
-                            masage_info(name)
                             save_user_in(name, session)
                             last_call_time = current_time
 
@@ -132,41 +133,4 @@ class VideoCv():
         finally:
             session.close()
             video_capture.release()
-
-    # if __name__ == "__main__":
-    #     Base.metadata.create_all(engine)
-    #
-    #     video_capture = cv2.VideoCapture(0)
-    #
-    #     session_generator = get_session()
-    #     session = next(session_generator)
-    #
-    #     try:
-    #         known_encodings, known_names = load_face_encodings_from_db(session)
-    #
-    #         while True:
-    #             ret, frame = video_capture.read()
-    #             if not ret:
-    #                 print("Не удалось захватить кадр.")
-    #                 break
-    #
-    #             frame = cv2.flip(frame, 1)
-    #
-    #             names, face_locations = recognize_faces(frame, known_encodings, known_names, session)
-    #
-    #             # Отрисовка рамок и имен
-    #             for (top, bottom, left, right), name in zip(face_locations, names):
-    #                 cv2.rectangle(frame, (left, top), (right, bottom), (0, 255, 0), 2)
-    #                 cv2.putText(frame, name, (left, top - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-    #
-    #             # Отображение видео
-    #             cv2.imshow("Video", frame)
-    #
-    #             # Выход при нажатии клавиши 'q'
-    #             if cv2.waitKey(1) & 0xFF == ord('q'):
-    #                 break
-    #     finally:
-    #         session.close()
-    #         video_capture.release()
-    #         cv2.destroyAllWindows()
 

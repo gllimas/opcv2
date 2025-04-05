@@ -1,5 +1,5 @@
 const facesList = document.getElementById("faces");
-const websocket = new WebSocket("ws://localhost:8080/ws/video");
+const websocket = new WebSocket("ws://localhost:8000/ws/video");
 
 websocket.onmessage = function(event) {
     const data = JSON.parse(event.data);
@@ -104,7 +104,7 @@ updateDateTime();
 
 
 
-const socket = new WebSocket("ws://localhost:8000/ws/names");
+const socket = new WebSocket("ws://localhost:8080/ws/names");
 
 socket.onopen = function() {
     console.log('Соединение с веб-сокетом установлено');
