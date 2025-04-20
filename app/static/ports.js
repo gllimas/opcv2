@@ -49,3 +49,5 @@ async function fetchPorts() {
         document.getElementById('back-button').addEventListener('click', function() {
             window.location.href = '/';  // Замените '/' на URL вашего главного экрана
         });
+
+

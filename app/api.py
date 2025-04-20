@@ -6,13 +6,12 @@ from fastapi import APIRouter, UploadFile, File, Form, Depends
 import os
 import pickle
 import face_recognition
-# from sqlalchemy import select
 from sqlmodel import Session
 from starlette.responses import JSONResponse, StreamingResponse, Response, FileResponse
 from starlette.websockets import WebSocket, WebSocketDisconnect
 from fece_load import VideoCv
 from database import get_session
-from models import Photo, UserFace, User
+from models import Photo, UserFace, User, UserIn
 
 router = APIRouter()
 
@@ -88,10 +87,6 @@ async def upload_photo(
         "user_face_id": new_user_face.id
     })
 
-
-
-
-
 @router.get("/video_feed/")
 async def video_feed():
     return StreamingResponse(VideoCv.generate_video_stream(), media_type="multipart/x-mixed-replace; boundary=frame")
@@ -114,16 +109,16 @@ async def exel(*, db: Session = Depends(get_session)):
                "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", }
     return Response(content=auth.getvalue(), headers=headers)
 
-
-
-
-
-
-
-
-
-
-
+@router.get("/users/")
+async def get_users(db: Session = Depends(get_session)):
+    users = db.query(UserIn).all()
+    return JSONResponse(content=[
+        {
+            "id": user.id,
+            "username": user.name,
+            "data": user.data.isoformat() if user.data else None
+        } for user in users
+    ])
 
 if not os.path.exists("static"):
     os.makedirs("static")

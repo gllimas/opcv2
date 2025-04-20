@@ -7,7 +7,7 @@ from starlette.responses import HTMLResponse
 from starlette.staticfiles import StaticFiles
 
 
-import api, auth, kontrol
+import api, auth, kontrol, button
 from database import engine
 
 
@@ -35,6 +35,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 app.include_router(api.router, tags=["API"], prefix="/api")
 app.include_router(auth.router, tags=["AUTH"], prefix="/auth")
 app.include_router(kontrol.router, tags=["kontrol"], prefix="/kontrol")
+app.include_router(button.router, tags=["button"], prefix="/button")
 
 create_db_and_tables()
 

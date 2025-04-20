@@ -17,15 +17,6 @@ faceCascade = cv2.CascadeClassifier(cascPathface)
 last_call_time = None
 
 
-
-
-#
-# def masage_info(info_message=None):
-#     if info_message:
-#         Name_user_in.append(info_message)
-#     return None
-
-
 def save_user_in(name, session):
     existing_user = session.query(UserIn).filter_by(name=name).first()
     if existing_user:

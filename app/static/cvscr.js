@@ -104,7 +104,7 @@ updateDateTime();
 
 
 
-const socket = new WebSocket("ws://localhost:8080/ws/names");
+const socket = new WebSocket("ws://localhost:8000/ws/names");
 
 socket.onopen = function() {
     console.log('Соединение с веб-сокетом установлено');

@@ -1,0 +1,52 @@
+.user-container {
+    background-color: #f2f2f2; /* Цвет фона контейнера */
+}
+
+h2 {
+    background-color: #f2f2f2; /* Цвет фона заголовка */
+    padding: 10px; /* Отступ внутри заголовка */
+    border-radius: 5px; /* Закругление углов заголовка */
+}
+
+
+table {
+    width: 100%; /* Ширина таблицы на всю ширину контейнера */
+    border-collapse: collapse; /* Убирает двойные границы между ячейками */
+    margin-top: 20px; /* Отступ сверху */
+    background-color: #f2f2f2; /* Цвет фона таблицы */
+    border-radius: 10px; /* Закругление углов таблицы */
+    overflow: hidden; /* Скрывает углы, которые не входят в рамку */
+}
+
+th, td {
+    border: 1px solid #ccc; /* Рамка вокруг ячеек */
+    padding: 10px; /* Отступ внутри ячеек */
+    text-align: left; /* Выравнивание текста в ячейках */
+}
+
+th {
+    background-color: #f2f2f2; /* Цвет фона заголовков (можно убрать, если хотите, чтобы он совпадал с таблицей) */
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9; /* Цвет фона для четных строк */
+}
+
+#control-buttons {
+    display: flex;
+    justify-content: space-around;
+    margin: 20px 0;
+}
+
+button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 24px; /* Увеличьте размер иконок */
+    color: #007bff; /* Цвет иконок */
+    transition: color 0.3s;
+}
+
+button:hover {
+    color: #0056b3; /* Цвет при наведении */
+}

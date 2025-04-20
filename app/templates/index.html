@@ -4,7 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="/static/spisok.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
     <title>Распознавание лиц и загрузка фотографий</title>
+
 </head>
 <body>
     <div id="banner">
@@ -18,7 +22,140 @@
 
     <button id="port-connection-button" onclick="location.href='/ports'">Подключить порт</button>
 
-     <script>
+
+
+
+    <div id="control-buttons">
+        <div class="but">
+    <button onclick="controlLight()" title="Включить свет">
+        <i class="fas fa-lightbulb"></i>
+    </button>
+    <button onclick="controlSocket()" title="Включить розетку">
+        <i class="fas fa-plug"></i>
+    </button>
+    <button id="fetch-users-button" onclick="fetchUsers()" title="Список кто входил">
+        <i class="fas fa-users"></i>
+    </button>
+        </div>
+        <br>
+
+        <div class="but">
+    <button onclick="controlHeated()" title="Тёплый пол">
+        <i class="fas fa-temperature-high"></i>
+    </button>
+    <button onclick="controlBlinds()" title="Жалюзи">
+        <i class="fas fa-window-maximize"></i>
+    </button>
+    <button onclick="controlAutomatic()" title="Автополив">
+        <i class="fas fa-water"></i>
+    </button>
+
+    </button>
+        </div>
+</div>
+
+    <!-- Место для вывода списка пользователей -->
+    <div id="users-list" class="user-container" style="display: none;">
+        <h2>Список кто входил</h2>
+        <table id="user-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Имя</th>
+                    <th>Дата</th>
+                </tr>
+            </thead>
+            <tbody id="user-tbody">
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        async function controlLight() {
+            const response = await fetch('button/light_on', {
+                method: 'GET',
+            });
+
+            if (response.ok) {
+                alert('Свет включен!');
+            } else {
+                alert('Ошибка при включении света!');
+            }
+        }
+
+        async function controlSocket() {
+            const response = await fetch('button/socket_on', {
+                method: 'GET',
+            });
+
+            if (response.ok) {
+                alert('Розетка включена!');
+            } else {
+                alert('Ошибка при включении розетки!');
+            }
+        }
+        async function controlHeated() {
+            const response = await fetch('button/heated_floor', {
+                method: 'GET',
+            });
+
+            if (response.ok) {
+                alert('Тёплый пол включен!');
+            } else {
+                alert('Ошибка при включении света!');
+            }
+        }
+
+        async function controlBlinds() {
+            const response = await fetch('button/blinds', {
+                method: 'GET',
+            });
+
+            if (response.ok) {
+                alert('Жалюзи открыты!');
+            } else {
+                alert('Ошибка при включении розетки!');
+            }
+        }
+        async function controlAutomatic() {
+            const response = await fetch('button/automatic_watering', {
+                method: 'GET',
+            });
+
+            if (response.ok) {
+                alert('Автополив включен!');
+            } else {
+                alert('Ошибка при включении розетки!');
+            }
+        }
+
+        async function fetchUsers() {
+            const response = await fetch('api/users/', {
+                method: 'GET',
+            });
+
+            if (response.ok) {
+                const users = await response.json();
+                const userTbody = document.getElementById('user-tbody');
+                userTbody.innerHTML = ''; // Очистить предыдущий список
+
+                users.forEach(user => {
+                    const row = document.createElement('tr'); // Создать строку таблицы
+                    row.innerHTML = `
+                        <td>${user.id}</td>
+                        <td>${user.username}</td>
+                        <td>${user.data}</td>
+                    `;
+                    userTbody.appendChild(row); // Добавить строку в тело таблицы
+                });
+
+                // Показать список пользователей
+                document.getElementById('users-list').style.display = 'block';
+            } else {
+                alert('Ошибка при получении списка пользователей!');
+            }
+        }
+
         async function buttonOn() {
             const response = await fetch('kontrol/button_on', {
                 method: 'GET',
@@ -35,13 +172,13 @@
     <button onclick="buttonOn()">Открыть</button>
 
     <div id="upload-container">
-        <h1>Загрузка фотографии</h1>
+        <h1>Загрузить фото</h1>
         <form id="upload-form" action="/api/upload/" method="post" enctype="multipart/form-data">
             <label for="title">Пользователь:</label>
             <input type="text" id="title" name="title" required>
 
             <label for="file">Файл:</label>
-            <input type="file" id="file" name="file" accept="image/*" required>
+            <input type="file" id="file" name="file" accept="image/*">
 
             <label for="user_name">Имя для распознания:</label>
             <input type="text" id="user_name" name="user_name" required>
@@ -53,11 +190,10 @@
 
     <ul id="faces"></ul>
 
-
-
-
-
-
     <script src="/static/cvscr.js"></script>
+    <script src="/static/ports.js"></script>
+
+
 </body>
 </html>
+
