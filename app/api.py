@@ -120,6 +120,7 @@ async def get_users(db: Session = Depends(get_session)):
         } for user in users
     ])
 
+
 if not os.path.exists("static"):
     os.makedirs("static")
 

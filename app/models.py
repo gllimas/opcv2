@@ -1,7 +1,8 @@
-from datetime import datetime
+from datetime import datetime, time
 from typing import Optional
 from pydantic import BaseModel
 from sqlmodel import Field, SQLModel, Relationship
+from typing import Optional, List
 
 from sqlmodel import SQLModel, Field
 
@@ -47,3 +48,17 @@ class UserButton(SQLModel, table=True):
     id: int = Field(default=None, primary_key=True)
     username: str = Field(unique=True, index=True, nullable=False)
     data: datetime = Field(default_factory=lambda: datetime.now().replace(second=0, microsecond=0))
+
+
+
+class SetingHeated(SQLModel, table=True):
+    id: int = Field(default=None, primary_key=True)
+    temperature: float = Field(default=None, nullable=False)
+
+class SetingAutomaticWatering(SQLModel, table=True):
+    id: int = Field(default=None, primary_key=True)
+    time: time
+
+class SetingAutomaticWateringOff(SQLModel, table=True):
+    id: int = Field(default=None, primary_key=True)
+    time: time

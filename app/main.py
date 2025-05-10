@@ -7,7 +7,8 @@ from starlette.responses import HTMLResponse
 from starlette.staticfiles import StaticFiles
 
 
-import api, auth, kontrol, button
+import api, auth, kontrol, button, seting
+
 from database import engine
 
 
@@ -36,6 +37,10 @@ app.include_router(api.router, tags=["API"], prefix="/api")
 app.include_router(auth.router, tags=["AUTH"], prefix="/auth")
 app.include_router(kontrol.router, tags=["kontrol"], prefix="/kontrol")
 app.include_router(button.router, tags=["button"], prefix="/button")
+app.include_router(seting.router, tags=["seting"], prefix="/seting")
+
+
+
 
 create_db_and_tables()
 
@@ -52,6 +57,11 @@ async def read_root(request: Request):
 @app.get("/login", response_class=HTMLResponse)
 async def login_page(request: Request):
     return templates.TemplateResponse("login.html", {"request": request})
+
+@app.get("/setting", response_class=HTMLResponse)
+async def setting_page(request: Request):
+    return templates.TemplateResponse("setting.html", {"request": request})
+
 
 
 

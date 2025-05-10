@@ -114,6 +114,27 @@ async def heated_port():
         if ser is not None and ser.is_open:
             ser.close()
 
+
+async def heated_port_off():
+    global selected_port
+    if selected_port is None:
+        return
+    ser = None
+    try:
+        ser = serial.Serial(selected_port, 9600, timeout=1)
+        await asyncio.sleep(2)
+        if ser.is_open:
+            ser.write(b'7')
+        else:
+            pass
+    except serial.SerialException as e:
+        print(f"Ошибка при подключении к порту: {e}")
+
+    finally:
+        if ser is not None and ser.is_open:
+            ser.close()
+
+
 async def blinds_port():
     global selected_port
     if selected_port is None:
@@ -151,6 +172,28 @@ async def automatic_watering_port():
     finally:
         if ser is not None and ser.is_open:
             ser.close()
+
+
+async def automatic_watering_port_off():
+    global selected_port
+    if selected_port is None:
+        return
+    ser = None
+    try:
+        ser = serial.Serial(selected_port, 9600, timeout=1)
+        await asyncio.sleep(2)
+        if ser.is_open:
+            ser.write(b'8')
+        else:
+            pass
+    except serial.SerialException as e:
+        print(f"Ошибка при подключении к порту: {e}")
+
+    finally:
+        if ser is not None and ser.is_open:
+            ser.close()
+
+
 
 @router.get("/button_on")
 async def button_on():
