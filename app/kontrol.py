@@ -16,6 +16,8 @@ selected_port = None
 
 Name_user_in = []
 
+
+# подключение сом порта
 @router.get("/usb_ports", response_class=JSONResponse)
 async def get_usb_ports():
     ports = serial.tools.list_ports.comports()
@@ -26,12 +28,15 @@ class SelectedPort(BaseModel):
     port: str
 
 
+# выбор сом порта
 @router.post("/select_port", response_class=JSONResponse)
 async def select_port(selected: SelectedPort):
     global selected_port
     selected_port = selected.port
     return {"message": f"Порт {selected.port} успешно выбран"}
 
+
+# функция открытя замка при распознания лица, отправляет на микроконтроллер сигнал для открытия
 async def com_port():
     global selected_port
     if selected_port is None:
@@ -56,6 +61,8 @@ async def com_port():
         if ser is not None and ser.is_open:
             ser.close()
 
+
+# функция включения свет, отправляет сигнал на микроконтроллер
 async def light_port():
     global selected_port
     if selected_port is None:
@@ -75,6 +82,8 @@ async def light_port():
         if ser is not None and ser.is_open:
             ser.close()
 
+
+# функция включения розетки, отправляет сигнал на микроконтроллер
 async def socket_port():
     global selected_port
     if selected_port is None:
@@ -95,6 +104,7 @@ async def socket_port():
             ser.close()
 
 
+# функция включения тёплого пола, отправляет сигнал на микроконтроллер
 async def heated_port():
     global selected_port
     if selected_port is None:
@@ -115,6 +125,7 @@ async def heated_port():
             ser.close()
 
 
+# функция отключения тёплого пола, отправляет сигнал на микроконтроллер
 async def heated_port_off():
     global selected_port
     if selected_port is None:
@@ -135,6 +146,7 @@ async def heated_port_off():
             ser.close()
 
 
+# функция для открытия жалюзи, отправляет сигнал на микроконтроллер
 async def blinds_port():
     global selected_port
     if selected_port is None:
@@ -154,6 +166,8 @@ async def blinds_port():
         if ser is not None and ser.is_open:
             ser.close()
 
+
+# функция для включения автополива, отправляет сигнал на микроконтроллер
 async def automatic_watering_port():
     global selected_port
     if selected_port is None:
@@ -174,6 +188,7 @@ async def automatic_watering_port():
             ser.close()
 
 
+# функция для выключения автополива, отправляет сигнал на микроконтроллер
 async def automatic_watering_port_off():
     global selected_port
     if selected_port is None:
