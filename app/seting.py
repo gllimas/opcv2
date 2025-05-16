@@ -15,6 +15,8 @@ from database import get_session
 router = APIRouter()
 
 
+
+# включение подогрева пола
 @router.post("/seting_heated")
 async def read_temperature():
     try:
@@ -46,6 +48,7 @@ class TimeInputModel(BaseModel):
     hour: conint(ge=0, le=23)  # Часы от 0 до 23
     minute: conint(ge=0, le=59)
 
+# добавление в базу данных температуры
 @router.post("/add_temperature")
 async def add_temperature(temp: TemperatureModel, session: Session = Depends(get_session)):
     new_temperature = SetingHeated(temperature=temp.temperature)
@@ -55,7 +58,7 @@ async def add_temperature(temp: TemperatureModel, session: Session = Depends(get
     return Response(status_code=202)
 
 
-
+# Сравнение температуры с датчик с температурой с базы данных
 @router.get("/compare_temperature", response_model=dict)
 async def compare_temperature(session: Session = Depends(get_session)):
     try:
@@ -85,12 +88,10 @@ async def compare_temperature(session: Session = Depends(get_session)):
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
 
 
+# Добавление времени включение автополива
 @router.post("/clock_water")
 async def clock_water(time_input: TimeInputModel, session: Session = Depends(get_session)):
-    # Создаем объект time с переданными часами и минутами
     time_to_save = time(hour=time_input.hour, minute=time_input.minute)
-
-    # Создаем новый объект с переданным временем
     new_automat = SetingAutomaticWatering(time=time_to_save)
     session.add(new_automat)
     session.commit()
@@ -99,12 +100,11 @@ async def clock_water(time_input: TimeInputModel, session: Session = Depends(get
     return {"message": "Time saved successfully", "saved_time": time_to_save}
 
 
+# Добавление времени отключения автополива
 @router.post("/clock_water_off")
 async def clock_water_off(time_input: TimeInputModel, session: Session = Depends(get_session)):
-    # Создаем объект time с переданными часами и минутами
     time_to_save = time(hour=time_input.hour, minute=time_input.minute)
 
-    # Создаем новый объект с переданным временем
     new_automat = SetingAutomaticWateringOff(time=time_to_save)
     session.add(new_automat)
     session.commit()
@@ -112,14 +112,15 @@ async def clock_water_off(time_input: TimeInputModel, session: Session = Depends
 
     return {"message": "Time saved successfully", "saved_time": time_to_save}
 
+
+
+# Сравниваем время с базы данных с настоящим временем для включения автополива
 @router.post("/water_on")
 async def water_on(session: Session = Depends(get_session)):
-    # Получаем текущее время
     current_time = datetime.now().time()
     watering_settings = session.execute(select(SetingAutomaticWatering))
     watering_settings = watering_settings.scalars().all()
 
-    # Проверяем, есть ли совпадения с текущим временем
     should_water = any(setting.time == current_time for setting in watering_settings)
 
     if should_water:
@@ -128,14 +129,14 @@ async def water_on(session: Session = Depends(get_session)):
     else:
         pass
 
+
+# Сравниваем время с базы данных с настоящим временем для отключения автополива
 @router.post("/water_off")
 async def water_off(session: Session = Depends(get_session)):
-    # Получаем текущее время
     current_time = datetime.now().time()
     watering_settings = session.execute(select(SetingAutomaticWateringOff))
     watering_settings = watering_settings.scalars().all()
 
-    # Проверяем, есть ли совпадения с текущим временем
     should_water = any(setting.time == current_time for setting in watering_settings)
 
     if should_water:
@@ -145,6 +146,7 @@ async def water_off(session: Session = Depends(get_session)):
         pass
 
 
+# Выводим прследнюю запись в базе данных температуры
 @router.get("/last_temperature")
 async def get_last_temperature(session: Session = Depends(get_session)):
     last_temperature = session.query(SetingHeated).order_by(SetingHeated.id.desc()).first()
@@ -155,21 +157,25 @@ async def get_last_temperature(session: Session = Depends(get_session)):
         return {"message": "No temperature records found"}
 
 
+
+# Выводим прследнюю запись в базе данных включения автополива
 @router.get("/last_clock_water")
 async def get_last_clock_water(session: Session = Depends(get_session)):
     last_clock_water = session.query(SetingAutomaticWatering).order_by(SetingAutomaticWatering.id.desc()).first()
 
     if last_clock_water:
-        return {"time": str(last_clock_water.time)}  # Преобразуйте время в строку, если необходимо
+        return {"time": str(last_clock_water.time)}
     else:
         return {"message": "No clock water records found"}
 
 
+
+# Выводим прследнюю запись в базе данных отключения автополива
 @router.get("/last_clock_water_off")
 async def get_last_clock_water(session: Session = Depends(get_session)):
     last_clock_water = session.query(SetingAutomaticWateringOff).order_by(SetingAutomaticWateringOff.id.desc()).first()
 
     if last_clock_water:
-        return {"time": str(last_clock_water.time)}  # Преобразуйте время в строку, если необходимо
+        return {"time": str(last_clock_water.time)}
     else:
         return {"message": "No clock water records found"}
